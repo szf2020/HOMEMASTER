@@ -220,9 +220,10 @@
     <div class="plc-section">
       <h2 id="home-assistant-modbus-webconfig-integration"><strong>Home Assistant / Modbus / Web Config Integration</strong></h2>
 
-      <div class="plc-grid">
+      <!-- Two columns: text left, WebConfig images right -->
+      <div class="plc-grid plc-hero-grid">
         <!-- Left: text -->
-        <div>
+        <div class="plc-copy">
           <p>
             The DIO-430-R1 supports flexible integration with:
           </p>
@@ -268,43 +269,54 @@
             <li>Persistent save to flash and restore on boot</li>
           </ul>
 
-          <div class="plc-grid" style="margin-top: 16px;">
-            <div class="plc-col">
-              <div class="plc-wirecard">
-                <img
-                  src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIO-430-R1/Images/webconfig2.png"
-                  alt="WebConfig interface: I/O configuration"
-                  loading="lazy"
-                  width="600"
-                  height="400"
-                  decoding="async"
-                >
-              </div>
-            </div>
-            <div class="plc-col">
-              <div class="plc-wirecard">
-                <img
-                  src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIO-430-R1/Images/webconfig3.png"
-                  alt="WebConfig interface: advanced settings"
-                  loading="lazy"
-                  width="600"
-                  height="400"
-                  decoding="async"
-                >
-              </div>
-            </div>
-          </div>
-
           <p class="plc-caption">
             WebConfig provides I/O mapping and configuration settings (stored persistently in flash).
           </p>
+        </div>
 
-          <h3 id="minimal-esphome-yaml"><strong>Minimal ESPHome YAML (Controller side)</strong></h3>
-          <p>
-            Use this on the MiniPLC/MicroPLC (ESPHome). It enables the RS-485 bus and imports a ready-made DIO package.
-          </p>
+        <!-- Right: WebConfig images -->
+        <div class="plc-rail">
+          <div class="plc-img plc-heroimg">
+            <img
+              src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIO-430-R1/Images/webconfig1.png"
+              alt="DIO-430-R1 WebConfig interface"
+              loading="lazy"
+              width="600"
+              height="400"
+              decoding="async"
+            >
+          </div>
+          <div class="plc-wirecard" style="margin-top: 16px;">
+            <img
+              src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIO-430-R1/Images/webconfig2.png"
+              alt="WebConfig interface: I/O configuration"
+              loading="lazy"
+              width="600"
+              height="400"
+              decoding="async"
+            >
+          </div>
+          <div class="plc-wirecard" style="margin-top: 16px;">
+            <img
+              src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIO-430-R1/Images/webconfig3.png"
+              alt="WebConfig interface: advanced settings"
+              loading="lazy"
+              width="600"
+              height="400"
+              decoding="async"
+            >
+          </div>
+        </div>
+      </div>
 
-          <pre><code>uart:
+      <!-- Full width: Minimal ESPHome YAML (Controller side) -->
+      <div class="plc-yaml-fullwidth" style="margin-top: 2rem;">
+        <h3 id="minimal-esphome-yaml"><strong>Minimal ESPHome YAML (Controller side)</strong></h3>
+        <p>
+          Use this on the MiniPLC/MicroPLC (ESPHome). It enables the RS-485 bus and imports a ready-made DIO package.
+        </p>
+
+        <pre><code>uart:
   id: uart_modbus
   tx_pin: 17
   rx_pin: 16
@@ -328,27 +340,14 @@ packages:
           dio_address: 4 # Modbus address set in WebConfig for this DIO
     refresh: 1d</code></pre>
 
-          <p class="plc-caption">
-            dio_address must match the Modbus address configured in WebConfig.
-          </p>
+        <p class="plc-caption">
+          dio_address must match the Modbus address configured in WebConfig.
+        </p>
 
-          <p>
-            Full Modbus addressing, register map, and advanced integration details are available in the
-            <a href="https://github.com/isystemsautomation/HOMEMASTER/tree/main/DIO-430-R1/README.md" target="_blank" rel="noopener">DIO-430-R1 README</a>.
-          </p>
-        </div>
-
-        <!-- Right: image -->
-        <div class="plc-img">
-          <img
-            src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIO-430-R1/Images/webconfig1.png"
-            alt="DIO-430-R1 WebConfig interface"
-            loading="lazy"
-            width="600"
-            height="400"
-            decoding="async"
-          >
-        </div>
+        <p>
+          Full Modbus addressing, register map, and advanced integration details are available in the
+          <a href="https://github.com/isystemsautomation/HOMEMASTER/tree/main/DIO-430-R1/README.md" target="_blank" rel="noopener">DIO-430-R1 README</a>.
+        </p>
       </div>
     </div>
 
