@@ -85,6 +85,15 @@ int16_t  aiRaw[4]   = {0,0,0,0};
 uint16_t aiMv[4]    = {0,0,0,0};
 int16_t  rtdTemp_x10[2] = {0,0};
 
+// ===== RTD fast recovery state (per-channel) =====
+// Used to recover quickly after ESD / latched MAX31865 upset without
+// repeatedly reinitializing the chip on every loop iteration.
+uint32_t rtdLastRecoverMs[2]     = {0, 0};
+uint8_t  rtdBadCount[2]          = {0, 0};
+float     rtdLastGoodTempC[2]   = {0, 0};
+int16_t   rtdLastGoodTempX10[2] = {0, 0};
+bool      rtdHasGoodValue[2]    = {false, false};
+
 // ===== RTD diagnostics (Web-only) =====
 uint8_t  rtdFault[2]     = {0, 0};
 String   rtdError[2]     = {"", ""};
@@ -971,6 +980,75 @@ void applyRtdHardwareCfg() {
   }
 }
 
+// ================== RTD recovery helper (ESD / latched MAX31865) ==================
+// MAX31865 can become upset after an ESD event and sometimes latch an invalid
+// internal state (e.g. stuck fault / wrong value). This helper forces a
+// full clear + reconfiguration over SPI so the channel can recover
+// automatically without manual reinit.
+bool recoverRtd(Adafruit_MAX31865& dev, int idx) {
+  // 1) Clear any latched fault state first
+  dev.clearFault();
+  delay(2);
+
+  // 2) Reinitialize the chip with the currently selected wire type
+  bool ok = dev.begin(wiresToEnum(rtdWiresCfg[idx]));
+  if (!ok) return false;
+
+  // 3) Clear fault again after reconfiguration
+  delay(2);
+  dev.clearFault();
+  delay(2);
+
+  // 4) Dummy read to settle the chip after begin() reconfiguration
+  (void)dev.readRTD();
+  delay(5);
+
+  return true;
+}
+
+// ================== Fast RTD recovery helper ==================
+// Keep delays short so recovery is fast after ESD-upset.
+// Anti-flapping is handled in readSensors(); this helper only does a single
+// clear + reinit + settle sequence for the affected RTD.
+bool recoverRtdFast(Adafruit_MAX31865& dev, int idx) {
+  dev.clearFault();
+  delay(2);
+
+  bool ok = dev.begin(wiresToEnum(rtdWiresCfg[idx]));
+  if (!ok) return false;
+
+  dev.clearFault();
+  delay(2);
+
+  // Dummy read to settle after reconfiguration
+  (void)dev.readRTD();
+  delay(5);
+
+  return true;
+}
+
+// ================== Re-apply RTD hardware configuration (one channel) ==================
+// This is the essential “same effect as applying RTD settings” recovery:
+// it forces a full MAX31865 runtime re-init for the selected wire mode
+// (rtdWiresCfg) and clears any latched fault state after ESD upset.
+bool reapplyRtdHardwareCfgOne(Adafruit_MAX31865& dev, int idx) {
+  // The Web UI "Apply RTD settings" triggers applyRtdHardwareCfg(),
+  // which reinitializes BOTH MAX31865 chips sequentially.
+  // In practice, after ESD one channel can be latched and only
+  // clears reliably when the other channel is reinitialized too.
+  Adafruit_MAX31865* rtds[2] = { &rtd1, &rtd2 };
+  bool okAll = true;
+  for (int i=0;i<2;i++) {
+    bool ok = rtds[i]->begin(wiresToEnum(rtdWiresCfg[i]));
+    rtd_ok[i] = ok;
+    okAll = okAll && ok;
+    if (ok) {
+      rtds[i]->clearFault();
+    }
+  }
+  return okAll;
+}
+
 // ================== FIX C: update RTD diagnostics only every rtdInfoInterval ==================
 void updateRtdDiagnostics() {
   Adafruit_MAX31865* rtds[2] = { &rtd1, &rtd2 };
@@ -997,8 +1075,6 @@ void updateRtdDiagnostics() {
     uint8_t f = rtds[i]->readFault();
     rtdFault[i] = f;
     rtdError[i] = decodeMax31865Fault(f);
-
-    if (f) rtds[i]->clearFault();
   }
 }
 
@@ -1028,23 +1104,175 @@ void readSensors() {
   }
 
   // FAST RTD temperature only (avoid readRTD here)
+  const uint32_t RTD_RECOVER_COOLDOWN_MS = 500;
+  const uint8_t  RTD_ZERO_AFTER_BAD_COUNT = 3;
   Adafruit_MAX31865* rtds[2] = { &rtd1, &rtd2 };
   for (int i=0;i<2;i++) {
     if (!rtd_ok[i]) {
-      rtdTemp_x10[i] = 0;
-      rtdTempC[i]    = 0;
-      mb.Hreg(HREG_TEMP_BASE + i, 0);
+      // If channel is not initialized, suppress bad values.
+      // Publish last known good value if we have one, otherwise publish 0.
+      if (rtdHasGoodValue[i]) {
+        rtdTempC[i]    = rtdLastGoodTempC[i];
+        rtdTemp_x10[i] = rtdLastGoodTempX10[i];
+        mb.Hreg(HREG_TEMP_BASE + i, (uint16_t)rtdTemp_x10[i]);
+      } else {
+        rtdTemp_x10[i] = 0;
+        rtdTempC[i]    = 0;
+        mb.Hreg(HREG_TEMP_BASE + i, 0);
+      }
       continue;
     }
 
     float rnom = (float)rtdRnominalCfg[i];
     float rref = (float)rtdRrefCfg[i];
-    float temp = rtds[i]->temperature(rnom, rref);
-    rtdTempC[i] = temp;
 
-    int16_t t10 = (int16_t)lroundf(temp * 10.0f);
-    rtdTemp_x10[i] = t10;
-    mb.Hreg(HREG_TEMP_BASE + i, (uint16_t)t10);
+    // ---- Fast, stable RTD recovery with anti-flapping ----
+    // Do not trust temperature() when faulted or out-of-range.
+    // Recovery is rate-limited (cooldown) so we don't reinitialize
+    // the MAX31865 on every loop and cause output flapping.
+
+    Adafruit_MAX31865& dev = *rtds[i];
+    uint32_t nowMs = millis();
+
+    // Read fault first, then RTD/temperature.
+    // MAX31865 can sometimes latch an invalid internal state after ESD where
+    // fault bits are not set but the computed temperature/resistance jumps.
+    uint8_t f = dev.readFault();
+    rtdFault[i] = f;
+    rtdError[i] = decodeMax31865Fault(f);
+
+    uint16_t rawCode = dev.readRTD();
+    float ratio = (rawCode / 32768.0f);
+    float ohmsNow = ratio * rref;
+
+    float temp = dev.temperature(rnom, rref);
+    bool tempFinite =
+      (!isnan(temp) && !isinf(temp));
+    bool tempInRange =
+      (temp >= -250.0f && temp <= 850.0f);
+    bool readingValid = (f == 0) && tempFinite && tempInRange;
+
+    // Jump detection: if the reading differs too much from the last known-good
+    // value, treat it as invalid and force a quick MAX31865 re-init.
+    bool jumpDetected = false;
+
+    // Extra guard: if the value is extremely high/low, treat it as suspicious
+    // even if the MAX31865 fault bit is not set (common after ESD).
+    // This prevents accepting a stuck temperature like ~735C as "valid".
+    if (readingValid && (temp > 600.0f || temp < -200.0f)) {
+      jumpDetected = true;
+      readingValid = false;
+      WebSerial.send(
+        "message",
+        String("RTD suspicious value -> forcing reinit: ch=") + String(i+1) +
+        " temp=" + String(temp, 2) + "C" +
+        " fault=0x" + String(f, HEX) +
+        " raw=" + String((int)rawCode)
+      );
+    }
+    if (rtdHasGoodValue[i]) {
+      float oldTempC = rtdLastGoodTempC[i];
+      float deltaT = fabs(temp - oldTempC);
+
+      // Convert last-good temperature back to resistance (Pt100/Pt1000 model)
+      // so we can compare resistance jumps even when fault bits are not set.
+      // Callendar–Van Dusen coefficients for platinum RTDs.
+      const float A = 3.9083e-3f;
+      const float B = -5.775e-7f;
+      const float C = -4.183e-12f;
+      float t = oldTempC;
+      float ohmsOld =
+        (t >= 0.0f)
+          ? (rnom * (1.0f + A*t + B*t*t))
+          : (rnom * (1.0f + A*t + B*t*t + C*(t - 100.0f)*t*t*t));
+
+      float deltaR = fabs(ohmsNow - ohmsOld);
+      if (deltaT > 100.0f || deltaR > 50.0f) {
+        jumpDetected = true;
+        readingValid = false; // do not overwrite last-good with a bad reading
+        WebSerial.send(
+          "message",
+          String("RTD jump detected -> forcing reinit: ch=") + String(i+1) +
+          " oldT=" + String(oldTempC, 2) + "C newT=" + String(temp, 2) + "C" +
+          " raw=" + String((int)rawCode)
+        );
+      }
+    }
+
+    if (readingValid) {
+      // Valid reading: store as last-good and publish immediately
+      rtdBadCount[i] = 0;
+      rtdHasGoodValue[i] = true;
+      rtdLastGoodTempC[i] = temp;
+      rtdLastGoodTempX10[i] = (int16_t)lroundf(temp * 10.0f);
+
+      rtdTempC[i] = temp;
+      rtdTemp_x10[i] = rtdLastGoodTempX10[i];
+      mb.Hreg(HREG_TEMP_BASE + i, (uint16_t)rtdTemp_x10[i]);
+      continue;
+    }
+
+    // Invalid reading: increment bad counter (anti-flapping)
+    rtdBadCount[i]++;
+
+    // Try one fast recovery if cooldown allows
+    bool retryValid = false;
+    float tempRetry = 0.0f;
+    // Try one fast recovery if cooldown allows, or immediately if a jump was detected.
+    if (jumpDetected || (nowMs - rtdLastRecoverMs[i] >= RTD_RECOVER_COOLDOWN_MS)) {
+      rtdLastRecoverMs[i] = nowMs;
+
+      uint16_t rawDbg = rawCode;
+      WebSerial.send(
+        "message",
+        String("RTD recovery triggered: ch=") + String(i+1) +
+        " fault=0x" + String(f, HEX) +
+        " raw=" + String(rawDbg) +
+        " wires=" + String(rtdWiresCfg[i]) +
+        " rnom=" + String(rtdRnominalCfg[i]) +
+        " rref=" + String(rtdRrefCfg[i])
+      );
+
+      if (reapplyRtdHardwareCfgOne(dev, i)) {
+        uint8_t f2 = dev.readFault();
+        float temp2 = dev.temperature(rnom, rref);
+
+        bool tempFinite2 = (!isnan(temp2) && !isinf(temp2));
+        bool tempInRange2 = (temp2 >= -250.0f && temp2 <= 850.0f);
+        retryValid = (f2 == 0) && tempFinite2 && tempInRange2;
+
+        // Update diagnostics after retry
+        rtdFault[i] = f2;
+        rtdError[i] = decodeMax31865Fault(f2);
+
+        if (retryValid) tempRetry = temp2;
+      }
+    }
+
+    if (retryValid) {
+      // Publish recovered value immediately and reset bad counter
+      rtdBadCount[i] = 0;
+      rtdHasGoodValue[i] = true;
+      rtdLastGoodTempC[i] = tempRetry;
+      rtdLastGoodTempX10[i] = (int16_t)lroundf(tempRetry * 10.0f);
+
+      rtdTempC[i] = tempRetry;
+      rtdTemp_x10[i] = rtdLastGoodTempX10[i];
+      mb.Hreg(HREG_TEMP_BASE + i, (uint16_t)rtdTemp_x10[i]);
+      continue;
+    }
+
+    // Still invalid after recovery attempt (or no recovery attempted yet):
+    // Avoid immediate 0 output on first/second bad reads. Hold last-good briefly.
+    if (rtdHasGoodValue[i] && rtdBadCount[i] < RTD_ZERO_AFTER_BAD_COUNT) {
+      rtdTempC[i]    = rtdLastGoodTempC[i];
+      rtdTemp_x10[i] = rtdLastGoodTempX10[i];
+      mb.Hreg(HREG_TEMP_BASE + i, (uint16_t)rtdTemp_x10[i]);
+    } else {
+      rtdTemp_x10[i] = 0;
+      rtdTempC[i]    = 0;
+      mb.Hreg(HREG_TEMP_BASE + i, 0);
+    }
   }
 }
 
