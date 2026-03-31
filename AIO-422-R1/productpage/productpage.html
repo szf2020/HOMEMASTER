@@ -222,6 +222,17 @@
             <li><strong>Save &amp; Disconnect</strong> — save settings and disconnect USB-C.</li>
           </ol>
 
+          <p>
+            The WebConfig tool provides a complete view of the module configuration:
+          </p>
+          <ul class="plc-list">
+            <li><strong>Modbus tab</strong> – set and verify the active Modbus address and baud rate, with live status feedback.</li>
+            <li><strong>Analog I/O tab</strong> – monitor live values from AI1–AI4 (0–10 V) in mV/volts and adjust AO1–AO2 DAC setpoints with sliders.</li>
+            <li><strong>RTD tab</strong> – view temperatures, raw diagnostics and fault codes for RTD1/RTD2, and change RTD wiring (2/3/4‑wire), sensor type (PT100/PT1000), and Rref; settings are stored in flash.</li>
+            <li><strong>Buttons &amp; LEDs tab</strong> – assign button actions (PID enable, AO toggles, manual LED toggle) and map LED sources to PID states or analog outputs.</li>
+            <li><strong>PID tab</strong> – configure four independent PID loops (SP, PV source, output target, Kp/Ki/Kd, scaling) and see live PV/SP/OUT trends in percent in real time.</li>
+          </ul>
+
           <p class="plc-caption">
             Register-level and entity mapping details are available in the
             <a href="https://github.com/isystemsautomation/HOMEMASTER/blob/main/AIO-422-R1/README.md" target="_blank" rel="noopener">AIO-422-R1 README</a>.
@@ -725,14 +736,13 @@ packages:
 
       <h3>EU Directives</h3>
       <p>
-        <strong>EMC</strong> 2014/30/EU · <strong>LVD</strong> 2014/35/EU · <strong>RoHS</strong> 2011/65/EU
+        <strong>EMC</strong> 2014/30/EU · <strong>RoHS</strong> 2011/65/EU
       </p>
 
       <h3>Harmonised Standards</h3>
       <table class="plc-table-compact">
         <tr><th scope="col">Area</th><th scope="col">Standards</th></tr>
         <tr><td><strong>EMC</strong></td><td>EN 61000-6-1 · EN 61000-6-3</td></tr>
-        <tr><td><strong>Electrical Safety</strong></td><td>EN 62368-1</td></tr>
         <tr><td><strong>RoHS</strong></td><td>EN IEC 63000</td></tr>
       </table>
 
