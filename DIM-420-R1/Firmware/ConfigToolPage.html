@@ -1,101 +1,210 @@
-<section style="font-family:'Segoe UI',system-ui,Roboto,Arial,sans-serif;padding:2rem;max-width:1100px;margin:auto;">
+<section style="font-family:var(--font, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial);padding:2rem;max-width:1160px;margin:auto;">
   <style>
-    .layout-2col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+    :root{
+      --page:#f8fafc;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#1f2937;
+      --muted2:#4b5563;
+      --border:#dde3ea;
+      --borderStrong:#d1d5db;
+      --brand:#2563eb;
+      --brandHover:#1d4ed8;
+      --shadow:0 1px 0 rgba(15,23,42,.05), 0 10px 22px rgba(15,23,42,.08);
+      --r:16px;
+      --r2:14px;
+      --gap:16px;
+      --font:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+    *{box-sizing:border-box}
+
+    .layout-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);}
     .span-2{grid-column:1 / -1;}
-    .cards-2col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-    @media (max-width:720px){.layout-2col{grid-template-columns:1fr}.cards-2col{grid-template-columns:1fr}section{padding:0}}
-    .card{border:1px solid #ccc;border-radius:6px;padding:1rem;background:#fff}
-    .card.di{background:#e6f7e8}.card.btn{background:#cbdcf7}.card.led{background:#f3f5d0}
-    .label{font-size:.9rem;color:#333;margin-bottom:.25rem;display:block}.tiny{font-size:.8rem;color:#666}
+    .cards-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);}
+    @media (max-width:720px){
+      .layout-2col{grid-template-columns:1fr}
+      .cards-2col{grid-template-columns:1fr}
+    }
+
+    label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px}
+    select,input,textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:13px;color:var(--text);background:#fff;box-sizing:border-box;transition:border-color .15s ease,box-shadow .15s ease,background-color .15s ease}
+    select:focus,input:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(37,99,235,.25)}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 8px rgba(16,24,40,0.05)}
+    .label{font-size:.9rem;color:var(--muted);margin-bottom:.25rem;display:block}
+    .tiny{font-size:.8rem;color:var(--muted2)}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.35rem 0}
     .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin:.35rem 0}
-    .pill{font-size:.85rem;padding:.15rem .5rem;border-radius:999px;border:1px solid #ddd;background:#eef;color:#223}
+    .pill{font-size:.8rem;padding:.15rem .45rem;border-radius:999px;border:1px solid #d1d5db;background:#f3f4f6;color:#111827}
     .inline{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
     button{cursor:pointer}
 
-    /* --- Fixed 5-row log window --- */
-    #log-line{margin-bottom:1.5rem;padding:1rem;background:#f9f9f9;border:1px solid #ccc;border-radius:6px;font-size:0.9rem;color:#333;}
+    .btn{padding:9px 18px;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--borderStrong);background:#fff;cursor:pointer;transition:background .18s ease,box-shadow .18s ease,transform .08s ease,border-color .18s ease,color .18s ease}
+    .btn:hover{background:#f3f4f6;box-shadow:0 1px 3px rgba(15,23,42,.16)}
+    .btn:active{transform:scale(0.98);box-shadow:none}
+    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .btn.primary:hover{background:var(--brandHover)}
+
+    .cardheader{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .cardheader h2{margin:0;font-size:18px;font-weight:600;color:var(--text)}
+    .cardbody{padding:16px}
+
+    .grid-two{display:grid;gap:var(--gap);margin-top:16px;grid-template-columns:1.2fr .8fr}
+    @media(max-width:980px){.grid-two{grid-template-columns:1fr}}
+
+    .appbar{display:flex;justify-content:space-between;gap:16px;padding:16px;background:var(--card);border:1px solid #dde3ea;border-radius:var(--r);box-shadow:0 2px 8px rgba(16,24,40,0.05);margin-bottom:var(--gap)}
+    .headLeft{display:flex;gap:24px;align-items:center;min-width:300px}
+    .moduleImage{width:256px;height:256px;border-radius:24px;border:1px solid var(--border);display:grid;place-items:center;overflow:hidden;background:#f8fafc}
+    .moduleImage img{width:100%;height:100%;object-fit:contain}
+    .title h1{margin:0;font-size:22px;font-weight:700;color:var(--text)}
+    .title p{margin:4px 0 0;font-size:13px;color:var(--muted2)}
+    .statusbar{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+    .pillrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;font-size:12px;color:var(--muted2)}
+
+    #log-line{margin-bottom:0;padding:0;background:transparent;border:none;border-radius:0;font-size:0.9rem;color:#333;}
+    #log-box{margin-top:.25rem;padding:1rem;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);font-size:12px}
     #log-content{
-      --lh: 1.25em;            /* line-height unit */
+      --lh: 1.25em;
       font-family:monospace;
       line-height:var(--lh);
-      height: calc(var(--lh) * 5);   /* exactly 5 rows tall */
+      height: calc(var(--lh) * 5);
       display:flex;
       flex-direction:column;
-      justify-content:flex-end; /* stick messages to the bottom */
+      justify-content:flex-end;
       overflow:auto;
-      white-space:pre;          /* preserve a single line per entry */
+      white-space:pre;
     }
-    #log-content .log-row{white-space:pre; }
-    #log-empty{
-      opacity:.55;
-      font-style:italic;
+    #log-content .log-row{white-space:pre;}
+    #log-empty{opacity:.55;font-style:italic;}
+
+    /* Dimming slider styling – reuse RGB light slider look */
+    .light-slider{width:100%;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;background:#e5e7eb;outline:none;cursor:pointer;transition:background 0.15s ease,box-shadow 0.15s ease,transform 0.12s ease}
+    .light-slider:focus{box-shadow:0 0 0 2px rgba(37,99,235,0.25)}
+    .light-slider:active{transform:scaleY(1.05)}
+    .light-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;background:#1f2937;border:2px solid #f9fafb;box-shadow:0 1px 2px rgba(0,0,0,0.35)}
+    .light-slider::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#1f2937;border:2px solid #f9fafb;box-shadow:0 1px 2px rgba(0,0,0,0.35)}
+    .light-slider::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:#e5e7eb}
+    .light-slider::-moz-range-track{height:6px;border-radius:6px;background:#e5e7eb}
+
+    @media(max-width:980px){
+      .statusbar{align-items:flex-start}
+      .pillrow{justify-content:flex-start}
+    }
+    @media(max-width:640px){
+      .row{grid-template-columns:1fr}
     }
   </style>
 
-  <div style="text-align:center;margin-bottom:2rem;">
-    <img src="https://www.home-master.eu/web/image/product.image/14/image_1024/Untitled-2.webp?unique=1d6564f" alt="DIM-420-R1" style="max-width:300px;border-radius:8px;" loading="lazy">
-    <h2>DIM-420-R1 Module Configuration</h2>
-    <p>Configure Modbus, <strong>digital inputs (4)</strong>, <strong>dimming channels (2)</strong>, <strong>buttons (4)</strong>, and <strong>user LEDs (4)</strong> via Web Serial.</p>
-  </div>
-
-  <div style="background:#f1f5ff;padding:1rem 1.25rem;margin-bottom:2rem;border-radius:6px;border-left:4px solid #2f6fff;">
-    <strong>Active Modbus Configuration</strong><br>
-    Address: <span id="live-address" style="font-weight:600;">--</span> |
-    Baud Rate: <span id="live-baud" style="font-weight:600;">--</span>
-  </div>
-
-  <form id="modbus-config" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;">
-    <div>
-      <label for="modbus-address" class="label"><strong>Modbus Address</strong></label>
-      <select id="modbus-address" style="width:100%;padding:10px;border-radius:6px;border:1px solid #ccc;"></select>
-    </div>
-    <div>
-      <label for="modbus-baud" class="label"><strong>Baud Rate</strong></label>
-      <select id="modbus-baud" style="width:100%;padding:10px;border-radius:6px;border:1px solid #ccc;">
-        <option>9600</option><option selected="">19200</option><option>38400</option><option>57600</option><option>115200</option>
-      </select>
-    </div>
-    <div style="grid-column:span 2;text-align:right;">
-      <button id="connect-button" type="button" style="padding:.55rem .9rem;border-radius:6px;border:1px solid #2f6fff;background:#2f6fff;color:#fff;">Connect</button>
-    </div>
-  </form>
-
-  <div id="log-line">
-    <strong>Serial Log:</strong>
-    <div id="log-content">
-      <div id="log-empty" class="log-row">— no messages —</div>
-    </div>
-  </div>
-
-  <div class="layout-2col">
-    <section class="span-2">
-      <h2 style="font-size:1.2rem;">Dimming Channels (2)</h2>
-      <div class="inline" style="justify-content:flex-end;margin:.15rem 0 .85rem;">
-        <label class="label" style="margin:0;display:flex;gap:.5rem;align-items:center;">
-          <input type="checkbox" id="disable-both-ch">
-          Disable both channels
-        </label>
+  <!-- Header -->
+  <header class="appbar">
+    <div class="headLeft">
+      <div class="moduleImage">
+        <img src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIM-420-R1/Images/Dimension.png" alt="DIM-420-R1 module photo" loading="lazy">
       </div>
-      <div id="channels-config" class="cards-2col"></div>
+      <div class="title">
+        <h1>DIM-420-R1 Module Configuration</h1>
+        <p>Configure Modbus, digital inputs, dimming channels, buttons, and user LEDs via Web Serial.</p>
+      </div>
+    </div>
+    <div class="statusbar">
+      <div class="pillrow">
+        <span>Modbus ID: <strong id="live-address">--</strong></span>
+        <span>Baud: <strong id="live-baud">--</strong></span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+        <button class="btn primary" id="connect-button" type="button">Connect</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Top: Device Setup + Serial Log -->
+  <div class="grid-two">
+    <section class="card">
+      <div class="cardheader">
+        <div>
+          <h2>Device Setup</h2>
+          <div class="tiny" style="margin-top:4px;color:var(--muted2);font-size:13px;">Serial connection and Modbus addressing.</div>
+        </div>
+      </div>
+      <div class="cardbody">
+        <form id="modbus-config" class="row">
+          <div>
+            <label for="modbus-address" class="label">Modbus Address</label>
+            <select id="modbus-address"></select>
+            <div style="margin-top:8px;font-size:12px;color:var(--muted2)">Use a unique address per device on the bus.</div>
+          </div>
+          <div>
+            <label for="modbus-baud" class="label">Baud Rate</label>
+            <select id="modbus-baud">
+              <option>9600</option><option selected="">19200</option><option>38400</option><option>57600</option><option>115200</option>
+            </select>
+            <div style="margin-top:8px;font-size:12px;color:var(--muted2)">Must match your controller UART settings.</div>
+          </div>
+        </form>
+      </div>
     </section>
 
-    <section class="span-2">
-      <h2 style="font-size:1.2rem;">Digital Inputs (4)</h2>
-      <div id="inputs-config" class="cards-2col"></div>
+    <section class="card">
+      <div class="cardheader">
+        <div>
+          <h2>Serial Log</h2>
+          <div class="tiny" style="margin-top:4px;color:var(--muted2);font-size:13px;">Communication messages and status updates.</div>
+        </div>
+      </div>
+      <div class="cardbody">
+        <div id="log-box">
+          <div id="log-content">
+            <div id="log-empty" class="log-row">— no messages —</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="layout-2col" style="margin-top:16px;">
+    <section class="span-2 card">
+      <div class="cardheader">
+        <h2>Dimming Channels (2)</h2>
+        <div class="inline" style="margin:0;">
+          <label class="label" style="margin:0;display:flex;gap:.5rem;align-items:center;font-size:.85rem;">
+            <input type="checkbox" id="disable-both-ch">
+            Disable both channels
+          </label>
+        </div>
+      </div>
+      <div class="cardbody">
+        <div id="channels-config" class="cards-2col"></div>
+      </div>
     </section>
 
-    <section class="span-2">
-      <h2 style="font-size:1.2rem;">Buttons (4)</h2>
-      <div id="buttons-config" class="cards-2col"></div>
-      <p class="tiny" style="margin-top:.5rem;">
-        <em>Hardware note:</em> On-board buttons are inverted in the schematic and handled in firmware (HIGH = pressed).
-      </p>
+    <section class="span-2 card">
+      <div class="cardheader">
+        <h2>Digital Inputs (4)</h2>
+      </div>
+      <div class="cardbody">
+        <div id="inputs-config" class="cards-2col"></div>
+      </div>
     </section>
 
-    <section class="span-2">
-      <h2 style="font-size:1.2rem;">User LEDs (4)</h2>
-      <div id="leds-config" class="cards-2col"></div>
+    <section class="span-2 card">
+      <div class="cardheader">
+        <h2>Buttons (4)</h2>
+      </div>
+      <div class="cardbody">
+        <div id="buttons-config" class="cards-2col"></div>
+        <p class="tiny" style="margin-top:.5rem;">
+          <em>Hardware note:</em> On-board buttons are inverted in the schematic and handled in firmware (HIGH = pressed).
+        </p>
+      </div>
+    </section>
+
+    <section class="span-2 card">
+      <div class="cardheader">
+        <h2>User LEDs (4)</h2>
+      </div>
+      <div class="cardbody">
+        <div id="leds-config" class="cards-2col"></div>
+      </div>
     </section>
   </div>
 
@@ -145,48 +254,51 @@
 
     // ---------- Builders ----------
     const CH = i => `
-      <div class="card" style="background:#f1f1f1;">
-        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;">
-          <span>Channel ${i}</span><span id="on-ch${i}" style="width:12px;height:12px;background:#ccc;border-radius:50%;display:inline-block;"></span>
-        </div>
-        <div class="inline" style="margin:.35rem 0 .6rem;">
-          <span class="tiny" style="color:#555;">AC on L–N:</span><span id="ac-badge-ch${i}" class="pill">--</span>
-          <span class="tiny" style="margin-left:.5rem;color:#555;">Frequency:</span><span id="freq-badge-ch${i}" class="pill">--.-- Hz</span>
-        </div>
-        <label class="label"><input type="checkbox" id="enable-ch${i}"> Enabled</label>
-        <div class="row">
-          <label class="label">Load Type
-            <select id="lt-ch${i}" style="width:100%;padding:.4rem;border-radius:6px;border:1px solid #ccc;">
-              <option value="0">Lamp (log)</option><option value="1">Heater (linear)</option><option value="2">Key</option>
-            </select>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">
+            <span>Channel ${i}</span>
+            <span style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted2);">
+              <span>AC on L–N:</span><span id="ac-badge-ch${i}" class="pill">--</span>
+              <span>Frequency:</span><span id="freq-badge-ch${i}" class="pill">--.-- Hz</span>
+              <span id="on-ch${i}" style="width:11px;height:11px;border-radius:50%;background:#9ca3af;display:inline-block;"></span>
+            </span>
           </label>
-          <label class="label">Cutoff Mode
-            <select id="cm-ch${i}" style="width:100%;padding:.4rem;border-radius:6px;border:1px solid #ccc;">
-              <option value="0">Leading (RL)</option><option value="1">Trailing (RC)</option>
-            </select>
-          </label>
+          <input type="range" id="percent-ch${i}" class="light-slider" min="0" max="100" step="1" value="0">
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.2rem;">
-          <label class="label" style="flex:1;">Setpoint (%)
-            <input type="range" id="percent-ch${i}" min="0" max="100" step="1" value="0" style="width:100%;">
-          </label>
-          <div style="width:170px;margin-left:.6rem;font-size:.95rem;color:#333;display:flex;flex-direction:column;align-items:flex-end;">
-            <span>Actual level: <strong id="level-val-ch${i}">0</strong></span>
-            <span style="font-family:monospace;">range <span id="range-ch${i}">[20..255]</span></span>
-            <span><strong id="percent-val-ch${i}">0</strong>%</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted2);">
+          <div>
+            <label class="label" style="margin-bottom:4px;"><input type="checkbox" id="enable-ch${i}"> Enabled</label>
+            <div style="display:flex;gap:10px;">
+              <label class="label" style="margin:0;">Load Type
+                <select id="lt-ch${i}">
+                  <option value="0">Lamp (log)</option><option value="1">Heater (linear)</option><option value="2">Key</option>
+                </select>
+              </label>
+              <label class="label" style="margin:0;">Cutoff Mode
+                <select id="cm-ch${i}">
+                  <option value="0">Leading (RL)</option><option value="1">Trailing (RC)</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div>Actual level: <strong id="level-val-ch${i}">0</strong></div>
+            <div style="font-family:monospace;">range <span id="range-ch${i}">[20..255]</span></div>
+            <div><strong id="percent-val-ch${i}">0</strong>%</div>
           </div>
         </div>
-        <div class="row" style="margin-top:.6rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <label class="label">Lower threshold
-            <input type="number" id="lower-ch${i}" min="0" max="255" step="1" value="20" style="width:100%;padding:.4rem;border-radius:6px;border:1px solid #ccc;">
+            <input type="number" id="lower-ch${i}" min="0" max="255" step="1" value="20">
           </label>
           <label class="label">Upper threshold
-            <input type="number" id="upper-ch${i}" min="0" max="255" step="1" value="255" style="width:100%;padding:.4rem;border-radius:6px;border:1px solid #ccc;">
+            <input type="number" id="upper-ch${i}" min="0" max="255" step="1" value="255">
           </label>
         </div>
-        <div class="row" style="margin-top:.6rem;grid-template-columns:1fr;">
+        <div>
           <label class="label">Preset level (0–255) <span class="pill">Used on Toggle</span>
-            <input type="number" id="preset-ch${i}" min="0" max="255" step="1" value="200" style="width:100%;padding:.4rem;border-radius:6px;border:1px solid #ccc;">
+            <input type="number" id="preset-ch${i}" min="0" max="255" step="1" value="200">
           </label>
         </div>
       </div>`;
@@ -207,37 +319,37 @@
     const DI_LM=[{v:0,t:'Toggle to preset or 0'},{v:1,t:'Increase/Decrease until toggle'}];
     const opt=s=>s.map(o=>`<option value="${o.v}">${o.t}</option>`).join('');
     const DI = i => `
-      <div class="card di">
+      <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;margin-bottom:.4rem;">
-          <span>IN${i}</span><span id="state-in${i}" style="width:12px;height:12px;background:#ccc;border-radius:50%;display:inline-block;"></span>
+          <span>IN${i}</span><span id="state-in${i}" style="width:12px;height:12px;background:#9ca3af;border-radius:50%;display:inline-block;"></span>
         </div>
-        <div class="row-3">
+        <div class="row-3" style="margin-top:4px;">
           <label class="label"><input type="checkbox" id="enable-in${i}"> Enabled</label>
           <label class="label"><input type="checkbox" id="invert-in${i}"> Inverted</label>
           <label class="label">Switch Type
-            <select id="swtype-in${i}" style="width:100%;padding:.35rem;border-radius:6px;border:1px solid #ccc;">${opt(DI_SW)}</select>
+            <select id="swtype-in${i}">${opt(DI_SW)}</select>
           </label>
         </div>
-        <div id="momentary-wrap-in${i}" style="border:1px dashed #a6c8a6;border-radius:6px;padding:.6rem;margin-top:.4rem;">
-          <div class="tiny" style="margin-bottom:.25rem;">Momentary press mappings</div>
+        <div id="momentary-wrap-in${i}" style="border:1px dashed #e5e7eb;border-radius:8px;padding:.6rem;margin-top:10px;background:#f9fafb;">
+          <div class="tiny" style="margin-bottom:.35rem;">Momentary press mappings</div>
           ${['Short','Long','DoubleShort','ShortThenLong'].map(k=>`
             <div class="row">
               <label class="label" style="margin:0;">${k} — Action
-                <select id="act-${k.toLowerCase()}-in${i}" style="width:100%;padding:.35rem;border-radius:6px;border:1px solid #ccc;">${opt(DI_ACT)}</select>
+                <select id="act-${k.toLowerCase()}-in${i}">${opt(DI_ACT)}</select>
               </label>
               <label class="label" style="margin:0;">${k} — Target
-                <select id="tgt-${k.toLowerCase()}-in${i}" style="width:100%;padding:.35rem;border-radius:6px;border:1px solid #ccc;">${opt(DI_TGT)}</select>
+                <select id="tgt-${k.toLowerCase()}-in${i}">${opt(DI_TGT)}</select>
               </label>
             </div>`).join('')}
         </div>
-        <div id="latching-wrap-in${i}" style="border:1px dashed #a6c8a6;border-radius:6px;padding:.6rem;margin-top:.4rem;display:none;">
-          <div class="tiny" style="margin-bottom:.25rem;">Latching toggle behavior</div>
+        <div id="latching-wrap-in${i}" style="border:1px dashed #e5e7eb;border-radius:8px;padding:.6rem;margin-top:10px;display:none;background:#f9fafb;">
+          <div class="tiny" style="margin-bottom:.35rem;">Latching toggle behavior</div>
           <div class="row">
             <label class="label">Latch Mode
-              <select id="lmode-in${i}" style="width:100%;padding:.35rem;border-radius:6px;border:1px solid #ccc;">${opt(DI_LM)}</select>
+              <select id="lmode-in${i}">${opt(DI_LM)}</select>
             </label>
             <label class="label">Latch Target
-              <select id="ltgt-in${i}" style="width:100%;padding:.35rem;border-radius:6px;border:1px solid #ccc;">${opt(DI_TGT)}</select>
+              <select id="ltgt-in${i}">${opt(DI_TGT)}</select>
             </label>
           </div>
         </div>
@@ -255,8 +367,8 @@
       {v:7,t:'Go to MAX CH1'},
       {v:8,t:'Go to MAX CH2'}
     ];
-    const BTN = i => `<div class="card btn"><div style="font-weight:600;">Button ${i}<span id="state-button${i}" style="width:12px;height:12px;background:#ccc;border-radius:50%;display:inline-block;float:right;"></span></div><label class="label">Action:<select id="action-button${i}" style="width:100%;padding:6px;border-radius:4px;border:1px solid #ccc;">${opt(BTN_ACT)}</select></label></div>`;
-    const LED = i => `<div class="card led"><div style="font-weight:600;">User LED ${i}<span id="state-led${i}" style="width:12px;height:12px;background:#ccc;border-radius:50%;display:inline-block;float:right;"></span></div><label class="label">Mode:<select id="mode-led${i}" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;"><option value="0">Steady (active)</option><option value="1">Blink (active)</option></select></label><br><label class="label">Source:<select id="source-led${i}" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;"><option value="0">None</option><option value="1">Channel 1</option><option value="2">Channel 2</option></select></label></div>`;
+    const BTN = i => `<div class="card"><div style="font-weight:600;display:flex;justify-content:space-between;align-items:center;">Button ${i}<span id="state-button${i}" style="width:12px;height:12px;background:#9ca3af;border-radius:50%;display:inline-block;"></span></div><label class="label">Action:<select id="action-button${i}">${opt(BTN_ACT)}</select></label></div>`;
+    const LED = i => `<div class="card"><div style="font-weight:600;display:flex;justify-content:space-between;align-items:center;">User LED ${i}<span id="state-led${i}" style="width:12px;height:12px;background:#9ca3af;border-radius:50%;display:inline-block;"></span></div><label class="label">Mode:<select id="mode-led${i}"><option value="0">Steady (active)</option><option value="1">Blink (active)</option></select></label><br><label class="label">Source:<select id="source-led${i}"><option value="0">None</option><option value="1">Channel 1</option><option value="2">Channel 2</option></select></label></div>`;
 
     (function mount(){
       const addrSel=$('modbus-address'); for(let i=1;i<=247;i++){ const o=document.createElement('option'); o.value=String(i); o.textContent=String(i); addrSel.appendChild(o); }
@@ -417,7 +529,7 @@
         }finally{ echoGuard=false; }
         const lvl = Number(c.level||0);
         $('level-val-ch'+i).textContent=String(lvl);
-        $('on-ch'+i).style.background=(lvl>0)?'#4caf50':'#ccc';
+        $('on-ch'+i).style.background=(lvl>0)?'#16a34a':'#9ca3af';
         const ac_ok = !!c.zc_ok; const f=$('freq-badge-ch'+i);
         const bId='ac-badge-ch'+i; const b=$(bId);
         if(b){ if(ac_ok){ b.textContent='ON'; b.style.background='#d4edda'; b.style.color='#155724'; b.style.borderColor='#c3e6cb'; } else { b.textContent='OFF'; b.style.background='#fdecea'; b.style.color='#b71c1c'; b.style.borderColor='#f5c6cb'; } }
@@ -441,7 +553,7 @@
           if(lt) lt.value=String(d.latchTarget||0);
 
           const st=$('state-in'+i);
-          if(st && typeof d.state!=='undefined'){ st.style.background=d.state ? '#4caf50' : '#ccc'; }
+          if(st && typeof d.state!=='undefined'){ st.style.background=d.state ? '#16a34a' : '#9ca3af'; }
         });
       }finally{ echoGuard=false; }
       diShow();
@@ -449,13 +561,13 @@
       const btnA=asArr(cfg.btn);
       echoGuard=true;
       try{
-        btnA.forEach((b,idx)=>{ const i=idx+1; const sel=$('action-button'+i), st=$('state-button'+i); if(sel&&b) sel.value=String(b.action||0); if(st&&b) st.style.background=b.state?'#4caf50':'#ccc'; });
+        btnA.forEach((b,idx)=>{ const i=idx+1; const sel=$('action-button'+i), st=$('state-button'+i); if(sel&&b) sel.value=String(b.action||0); if(st&&b) st.style.background=b.state?'#16a34a':'#9ca3af'; });
       }finally{ echoGuard=false; }
 
       const ledA=asArr(cfg.led);
       echoGuard=true;
       try{
-        ledA.forEach((L,idx)=>{ const i=idx+1; const m=$('mode-led'+i), s=$('source-led'+i), st=$('state-led'+i); if(m&&L) m.value=String(L.mode||0); if(s&&L) s.value=String(L.source||0); if(st&&L) st.style.background=L.state?'#ffb300':'#ccc'; });
+        ledA.forEach((L,idx)=>{ const i=idx+1; const m=$('mode-led'+i), s=$('source-led'+i), st=$('state-led'+i); if(m&&L) m.value=String(L.mode||0); if(s&&L) s.value=String(L.source||0); if(st&&L) st.style.background=L.state?'#16a34a':'#9ca3af'; });
       }finally{ echoGuard=false; }
     }
 
