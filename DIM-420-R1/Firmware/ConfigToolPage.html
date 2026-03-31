@@ -10,13 +10,43 @@
       --borderStrong:#d1d5db;
       --brand:#2563eb;
       --brandHover:#1d4ed8;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
       --shadow:0 1px 0 rgba(15,23,42,.05), 0 10px 22px rgba(15,23,42,.08);
       --r:16px;
       --r2:14px;
       --gap:16px;
       --font:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      --tint-input-bg:#e9fbe9;
+      --tint-input-br:#bfe7bf;
+      --tint-button-bg:#dbe9ff;
+      --tint-button-br:#b7cffc;
+      --tint-led-bg:#f6f8d6;
+      --tint-led-br:#e2e79e;
+      --tint-relay-bg:#eef2ff;
+      --tint-relay-br:#c7d2fe;
     }
     *{box-sizing:border-box}
+
+    label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px}
+    select,input,textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:13px;color:var(--text);background:#fff;box-sizing:border-box;transition:border-color .15s ease,box-shadow .15s ease,background-color .15s ease}
+    select:focus,input:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(37,99,235,.25)}
+
+    .btn{padding:9px 18px;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--borderStrong);background:#fff;cursor:pointer;transition:background .18s ease,box-shadow .18s ease,transform .08s ease,border-color .18s ease,color .18s ease}
+    .btn:hover{background:#f3f4f6;box-shadow:0 1px 3px rgba(15,23,42,.16)}
+    .btn:active{transform:scale(0.98);box-shadow:none}
+    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .btn.primary:hover{background:var(--brandHover)}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 8px rgba(16,24,40,0.05)}
+    .cardheader{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .cardheader h2{margin:0;font-size:18px;font-weight:600;color:var(--text)}
+    .cardbody{padding:16px}
+
+    .grid{display:grid;gap:var(--gap);margin-top:16px}
+    .grid.two{grid-template-columns:1.2fr .8fr}
+    @media(max-width:980px){.grid.two{grid-template-columns:1fr}}
 
     .layout-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);}
     .span-2{grid-column:1 / -1;}
@@ -26,31 +56,9 @@
       .cards-2col{grid-template-columns:1fr}
     }
 
-    label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px}
-    select,input,textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:13px;color:var(--text);background:#fff;box-sizing:border-box;transition:border-color .15s ease,box-shadow .15s ease,background-color .15s ease}
-    select:focus,input:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(37,99,235,.25)}
-
-    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 8px rgba(16,24,40,0.05)}
-    .label{font-size:.9rem;color:var(--muted);margin-bottom:.25rem;display:block}
-    .tiny{font-size:.8rem;color:var(--muted2)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.35rem 0}
-    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin:.35rem 0}
-    .pill{font-size:.8rem;padding:.15rem .45rem;border-radius:999px;border:1px solid #d1d5db;background:#f3f4f6;color:#111827}
-    .inline{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
-    button{cursor:pointer}
-
-    .btn{padding:9px 18px;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--borderStrong);background:#fff;cursor:pointer;transition:background .18s ease,box-shadow .18s ease,transform .08s ease,border-color .18s ease,color .18s ease}
-    .btn:hover{background:#f3f4f6;box-shadow:0 1px 3px rgba(15,23,42,.16)}
-    .btn:active{transform:scale(0.98);box-shadow:none}
-    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-    .btn.primary:hover{background:var(--brandHover)}
-
-    .cardheader{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-    .cardheader h2{margin:0;font-size:18px;font-weight:600;color:var(--text)}
-    .cardbody{padding:16px}
-
-    .grid-two{display:grid;gap:var(--gap);margin-top:16px;grid-template-columns:1.2fr .8fr}
-    @media(max-width:980px){.grid-two{grid-template-columns:1fr}}
+    .sectiontitle{margin:18px 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+    .sectiontitle h3{margin:0;font-size:16px;font-weight:600;color:var(--text)}
+    .sectiontitle .hint{margin:0;font-size:13px;color:var(--muted2);font-weight:650}
 
     .appbar{display:flex;justify-content:space-between;gap:16px;padding:16px;background:var(--card);border:1px solid #dde3ea;border-radius:var(--r);box-shadow:0 2px 8px rgba(16,24,40,0.05);margin-bottom:var(--gap)}
     .headLeft{display:flex;gap:24px;align-items:center;min-width:300px}
@@ -61,32 +69,34 @@
     .statusbar{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
     .pillrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;font-size:12px;color:var(--muted2)}
 
-    #log-line{margin-bottom:0;padding:0;background:transparent;border:none;border-radius:0;font-size:0.9rem;color:#333;}
     #log-box{margin-top:.25rem;padding:1rem;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);font-size:12px}
-    #log-content{
-      --lh: 1.25em;
-      font-family:monospace;
-      line-height:var(--lh);
-      height: calc(var(--lh) * 5);
-      display:flex;
-      flex-direction:column;
-      justify-content:flex-end;
-      overflow:auto;
-      white-space:pre;
-    }
-    #log-content .log-row{white-space:pre;}
-    #log-empty{opacity:.55;font-style:italic;}
+    #log-content{white-space:pre-wrap;font-family:monospace;line-height:1.25em;margin:.5rem 0 0;height:calc(1.25em * 8);overflow-y:auto;background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:.6rem}
 
-    /* Dimming slider styling – reuse RGB light slider look */
+    .iogroup{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--gap)}
+    .iogroup + .iogroup{margin-top:16px;}
+    .iocard{border:1px solid #dde3ea;border-radius:12px;padding:12px 12px 14px;background:#fff}
+    .iotop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .ioid{font-size:14px;font-weight:900}
+    .state-dot{width:11px;height:11px;border-radius:50%;display:inline-block;vertical-align:middle;margin-left:.4rem;background:#9ca3af}
+
+    .tint-input{background:#ffffff;border-color:#dde3ea}
+    .tint-button{background:#ffffff;border-color:#dde3ea}
+    .tint-led{background:#ffffff;border-color:#dde3ea}
+
+    .checkRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    .check{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--text)}
+    .check input{width:auto}
+
     .light-slider{width:100%;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;background:#e5e7eb;outline:none;cursor:pointer;transition:background 0.15s ease,box-shadow 0.15s ease,transform 0.12s ease}
     .light-slider:focus{box-shadow:0 0 0 2px rgba(37,99,235,0.25)}
     .light-slider:active{transform:scaleY(1.05)}
     .light-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;background:#1f2937;border:2px solid #f9fafb;box-shadow:0 1px 2px rgba(0,0,0,0.35)}
     .light-slider::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#1f2937;border:2px solid #f9fafb;box-shadow:0 1px 2px rgba(0,0,0,0.35)}
-    .light-slider::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:#e5e7eb}
-    .light-slider::-moz-range-track{height:6px;border-radius:6px;background:#e5e7eb}
+    .light-slider::-webkit-slider-runnable-track{height:6px;border-radius:6px}
+    .light-slider::-moz-range-track{height:6px;border-radius:6px}
 
     @media(max-width:980px){
+      .grid-two{grid-template-columns:1fr}
       .statusbar{align-items:flex-start}
       .pillrow{justify-content:flex-start}
     }
@@ -95,11 +105,10 @@
     }
   </style>
 
-  <!-- Header -->
   <header class="appbar">
     <div class="headLeft">
       <div class="moduleImage">
-        <img src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIM-420-R1/Images/Dimension.png" alt="DIM-420-R1 module photo" loading="lazy">
+        <img src="https://cdn.jsdelivr.net/gh/isystemsautomation/HOMEMASTER/DIM-420-R1/Images/photo1.png" alt="DIM-420-R1 module photo" loading="lazy">
       </div>
       <div class="title">
         <h1>DIM-420-R1 Module Configuration</h1>
@@ -117,8 +126,7 @@
     </div>
   </header>
 
-  <!-- Top: Device Setup + Serial Log -->
-  <div class="grid-two">
+  <div class="grid two">
     <section class="card">
       <div class="cardheader">
         <div>
@@ -161,7 +169,11 @@
     </section>
   </div>
 
-  <div class="layout-2col" style="margin-top:16px;">
+  <div class="sectiontitle" style="margin-top:24px;">
+    <h3>Dimming Channels (2)</h3>
+    <p class="hint">Adjust dimmer channels and monitor live AC state.</p>
+  </div>
+  <div class="layout-2col">
     <section class="span-2 card">
       <div class="cardheader">
         <h2>Dimming Channels (2)</h2>
@@ -176,7 +188,13 @@
         <div id="channels-config" class="cards-2col"></div>
       </div>
     </section>
+  </div>
 
+  <div class="sectiontitle">
+    <h3>Digital Inputs (4)</h3>
+    <p class="hint">Map physical inputs to dimmer actions and targets.</p>
+  </div>
+  <div class="layout-2col">
     <section class="span-2 card">
       <div class="cardheader">
         <h2>Digital Inputs (4)</h2>
@@ -185,7 +203,13 @@
         <div id="inputs-config" class="cards-2col"></div>
       </div>
     </section>
+  </div>
 
+  <div class="sectiontitle">
+    <h3>Buttons (4)</h3>
+    <p class="hint">Configure local pushbuttons for quick dimmer control.</p>
+  </div>
+  <div class="layout-2col">
     <section class="span-2 card">
       <div class="cardheader">
         <h2>Buttons (4)</h2>
@@ -197,7 +221,13 @@
         </p>
       </div>
     </section>
+  </div>
 
+  <div class="sectiontitle">
+    <h3>User LEDs (4)</h3>
+    <p class="hint">Indicate dimmer and system states with user LEDs.</p>
+  </div>
+  <div class="layout-2col">
     <section class="span-2 card">
       <div class="cardheader">
         <h2>User LEDs (4)</h2>
@@ -208,14 +238,11 @@
     </section>
   </div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script src="https://unpkg.com/simple-web-serial@latest/dist/simple-web-serial.min.js"></script>
   <script>
   (function () {
-    // ---------- Constants & helpers ----------
     const N={DI:4,CH:2,BTN:4,LED:4};
-    const LOG_STORE=80, LOG_SHOW=5;            // exactly 5 visible rows
+    const LOG_STORE=80, LOG_SHOW=5;
     const DEB=200, CH_DEB=120;
     const $=id=>document.getElementById(id);
     const clamp=(a,v,b)=>Math.min(b,Math.max(a,Number(v)||0));
@@ -223,13 +250,12 @@
     const on=(el,ev,fn)=>el&&el.addEventListener(ev,fn,{passive:true});
     const asArr=(x)=> Array.isArray(x) ? x : (x && typeof x==='object' ? Object.values(x) : []);
 
-    // --- log buffer: newest at bottom, older above, fixed 5-row viewport
     const logBuf=[];
     function renderLog(){
       const box = $("log-content");
       if(!box) return;
       box.innerHTML="";
-      const slice = logBuf.slice(-LOG_SHOW);  // last 5 lines, chronological
+      const slice = logBuf.slice(-LOG_SHOW);
       if(slice.length===0){
         const empty=document.createElement('div');
         empty.id="log-empty"; empty.className="log-row"; empty.textContent="— no messages —";
@@ -242,7 +268,7 @@
         row.textContent=line;
         box.appendChild(row);
       });
-      box.scrollTop = box.scrollHeight; // keep view pinned to bottom as new lines arrive
+      box.scrollTop = box.scrollHeight;
     }
     const log=(lbl,data)=>{
       const t=new Date().toLocaleTimeString();
@@ -252,7 +278,8 @@
       renderLog();
     };
 
-    // ---------- Builders ----------
+    const range = n => Array.from({length:n},(_,i)=>i+1);
+
     const CH = i => `
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div>
@@ -303,7 +330,6 @@
         </div>
       </div>`;
 
-    /* CHANGE #1: add Go to maximum (v:8) */
     const DI_ACT=[
       {v:0,t:'None'},
       {v:1,t:'Turn on'},
@@ -319,32 +345,45 @@
     const DI_LM=[{v:0,t:'Toggle to preset or 0'},{v:1,t:'Increase/Decrease until toggle'}];
     const opt=s=>s.map(o=>`<option value="${o.v}">${o.t}</option>`).join('');
     const DI = i => `
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;margin-bottom:.4rem;">
-          <span>IN${i}</span><span id="state-in${i}" style="width:12px;height:12px;background:#9ca3af;border-radius:50%;display:inline-block;"></span>
+      <div class="iocard tint-input">
+        <div class="iotop">
+          <span class="ioid">IN${i}</span>
+          <span id="state-in${i}" class="state-dot"></span>
         </div>
-        <div class="row-3" style="margin-top:4px;">
-          <label class="label"><input type="checkbox" id="enable-in${i}"> Enabled</label>
-          <label class="label"><input type="checkbox" id="invert-in${i}"> Inverted</label>
+
+        <div class="checkRow">
+          <label class="check"><input type="checkbox" id="enable-in${i}"> Enabled</label>
+          <label class="check"><input type="checkbox" id="invert-in${i}"> Inverted</label>
+        </div>
+
+        <div style="margin-bottom:10px;">
           <label class="label">Switch Type
             <select id="swtype-in${i}">${opt(DI_SW)}</select>
           </label>
         </div>
-        <div id="momentary-wrap-in${i}" style="border:1px dashed #e5e7eb;border-radius:8px;padding:.6rem;margin-top:10px;background:#f9fafb;">
-          <div class="tiny" style="margin-bottom:.35rem;">Momentary press mappings</div>
-          ${['Short','Long','DoubleShort','ShortThenLong'].map(k=>`
-            <div class="row">
-              <label class="label" style="margin:0;">${k} — Action
-                <select id="act-${k.toLowerCase()}-in${i}">${opt(DI_ACT)}</select>
-              </label>
-              <label class="label" style="margin:0;">${k} — Target
-                <select id="tgt-${k.toLowerCase()}-in${i}">${opt(DI_TGT)}</select>
-              </label>
-            </div>`).join('')}
+
+        <div id="momentary-wrap-in${i}" style="border:1px dashed #e5e7eb;border-radius:8px;padding:.6rem;margin-top:4px;background:#f9fafb;">
+          <div class="tiny" style="margin-bottom:.35rem;font-weight:600;">Momentary press mappings</div>
+          <div class="row" style="margin-top:.25rem;">
+            ${['Short','Long','DoubleShort','ShortThenLong'].map(k=>`
+              <div>
+                <div class="tiny" style="margin-bottom:2px;">${k}</div>
+                <div class="row" style="margin:0;">
+                  <label class="label" style="margin:0;">Action
+                    <select id="act-${k.toLowerCase()}-in${i}">${opt(DI_ACT)}</select>
+                  </label>
+                  <label class="label" style="margin:0;">Target
+                    <select id="tgt-${k.toLowerCase()}-in${i}">${opt(DI_TGT)}</select>
+                  </label>
+                </div>
+              </div>
+            `).join('')}
+          </div>
         </div>
-        <div id="latching-wrap-in${i}" style="border:1px dashed #e5e7eb;border-radius:8px;padding:.6rem;margin-top:10px;display:none;background:#f9fafb;">
-          <div class="tiny" style="margin-bottom:.35rem;">Latching toggle behavior</div>
-          <div class="row">
+
+        <div id="latching-wrap-in${i}" style="border:1px dashed #e5e7eb;border-radius:8px;padding:.6rem;margin-top:8px;display:none;background:#f9fafb;">
+          <div class="tiny" style="margin-bottom:.35rem;font-weight:600;">Latching toggle behavior</div>
+          <div class="row" style="margin-top:.25rem;">
             <label class="label">Latch Mode
               <select id="lmode-in${i}">${opt(DI_LM)}</select>
             </label>
@@ -355,7 +394,6 @@
         </div>
       </div>`;
 
-    /* CHANGE #2 (optional, to match firmware): add Max CH1/CH2 */
     const BTN_ACT=[
       {v:0,t:'None'},
       {v:1,t:'Toggle CH1'},
@@ -367,18 +405,56 @@
       {v:7,t:'Go to MAX CH1'},
       {v:8,t:'Go to MAX CH2'}
     ];
-    const BTN = i => `<div class="card"><div style="font-weight:600;display:flex;justify-content:space-between;align-items:center;">Button ${i}<span id="state-button${i}" style="width:12px;height:12px;background:#9ca3af;border-radius:50%;display:inline-block;"></span></div><label class="label">Action:<select id="action-button${i}">${opt(BTN_ACT)}</select></label></div>`;
-    const LED = i => `<div class="card"><div style="font-weight:600;display:flex;justify-content:space-between;align-items:center;">User LED ${i}<span id="state-led${i}" style="width:12px;height:12px;background:#9ca3af;border-radius:50%;display:inline-block;"></span></div><label class="label">Mode:<select id="mode-led${i}"><option value="0">Steady (active)</option><option value="1">Blink (active)</option></select></label><br><label class="label">Source:<select id="source-led${i}"><option value="0">None</option><option value="1">Channel 1</option><option value="2">Channel 2</option></select></label></div>`;
+    const BTN = i => `
+      <div class="iocard tint-button">
+        <div class="iotop">
+          <span class="ioid">Button ${i}</span>
+          <span id="state-button${i}" class="state-dot"></span>
+        </div>
+        <div>
+          <label class="label">Action
+            <select id="action-button${i}">${opt(BTN_ACT)}</select>
+          </label>
+        </div>
+      </div>`;
+
+    const LED = i => `
+      <div class="iocard tint-led">
+        <div class="iotop">
+          <span class="ioid">User LED ${i}</span>
+          <span id="state-led${i}" class="state-dot"></span>
+        </div>
+        <div class="row" style="margin:.25rem 0;">
+          <label class="label">Mode
+            <select id="mode-led${i}">
+              <option value="0">Steady (active)</option>
+              <option value="1">Blink (active)</option>
+            </select>
+          </label>
+          <label class="label">Source
+            <select id="source-led${i}">
+              <option value="0">None</option>
+              <option value="1">Channel 1</option>
+              <option value="2">Channel 2</option>
+            </select>
+          </label>
+        </div>
+      </div>`;
 
     (function mount(){
-      const addrSel=$('modbus-address'); for(let i=1;i<=247;i++){ const o=document.createElement('option'); o.value=String(i); o.textContent=String(i); addrSel.appendChild(o); }
-      const ch=$('channels-config'); for(let i=1;i<=N.CH;i++) ch.insertAdjacentHTML('beforeend', CH(i));
-      const di=$('inputs-config');   for(let i=1;i<=N.DI;i++) di.insertAdjacentHTML('beforeend', DI(i));
-      const bt=$('buttons-config');  for(let i=1;i<=N.BTN;i++) bt.insertAdjacentHTML('beforeend', BTN(i));
-      const ld=$('leds-config');     for(let i=1;i<=N.LED;i++) ld.insertAdjacentHTML('beforeend', LED(i));
+      const addrSel=$('modbus-address');
+      range(247).forEach(i=>{
+        const o=document.createElement('option');
+        o.value=String(i);
+        o.textContent=String(i);
+        addrSel.appendChild(o);
+      });
+      range(N.CH).forEach(i=> $('channels-config').insertAdjacentHTML('beforeend', CH(i)));
+      range(N.DI).forEach(i=> $('inputs-config').insertAdjacentHTML('beforeend', DI(i)));
+      range(N.BTN).forEach(i=> $('buttons-config').insertAdjacentHTML('beforeend', BTN(i)));
+      range(N.LED).forEach(i=> $('leds-config').insertAdjacentHTML('beforeend', LED(i)));
     })();
 
-    // ---------- Serial ----------
     const conn=SimpleWebSerial.setupSerialConnection({requestAccessOnPageLoad:false, requestElement:'connect-button'});
     const isOpen=()=>{ try{return typeof conn.isOpen==='function'?conn.isOpen():!!conn.port;}catch{return false;} };
     const send=(t,p)=>{ if(isOpen()) try{ conn.send(t,p); }catch(e){} };
@@ -388,7 +464,6 @@
     conn.on('message', msg=> log('DIM-420-R1', msg));
     conn.on('config', cfg => applyConfig(cfg));
 
-    // Modbus -> values
     const pingValues=()=> {
       const addr = Number($('modbus-address').value||3);
       const baud = Number($('modbus-baud').value||19200);
@@ -397,12 +472,10 @@
     on($('modbus-address'),'change', pingValues);
     on($('modbus-baud'),'change', pingValues);
 
-    // ---------- Debounced send ----------
     const timers={}; let echoGuard=false;
     const schedule=(key,fn,ms=DEB)=>{ if(!isOpen()||echoGuard) return; clearTimeout(timers[key]); timers[key]=setTimeout(fn,ms); };
     const acBadge=(id,on)=>{ const b=$(id); if(!b) return; if(on){ b.textContent='ON'; b.style.background='#d4edda'; b.style.color='#155724'; b.style.borderColor='#c3e6cb'; } else { b.textContent='OFF'; b.style.background='#fdecea'; b.style.color='#b71c1c'; b.style.borderColor='#f5c6cb'; } };
 
-    // ---------- Channels (senders) ----------
     function chList(){
       const list=[];
       for(let i=1;i<=N.CH;i++){
@@ -418,7 +491,6 @@
     }
     const chSend=()=> send('Config',{t:'channels',list:chList()});
 
-    // One-click disable for both dimming channels
     let prevDisableBoth=null;
     const applyDisableBoth=(disable)=>{
       if(disable){
@@ -428,17 +500,12 @@
           percent1: Number($('percent-ch1').value||0),
           percent2: Number($('percent-ch2').value||0)
         };
-
-        // Step 1: set level=0 while enable flags remain unchanged.
-        // This guarantees the gate is turned off before we disable PWM generation.
         $('percent-ch1').value='0';
         $('percent-ch2').value='0';
         const pv1=$('percent-val-ch1'), pv2=$('percent-val-ch2');
         if(pv1) pv1.textContent='0';
         if(pv2) pv2.textContent='0';
         chSend();
-
-        // Step 2: now disable both channels.
         $('enable-ch1').checked=false;
         $('enable-ch2').checked=false;
         chSend();
@@ -467,7 +534,6 @@
     }
     for(let i=1;i<=N.CH;i++) chBind(i);
 
-    // ---------- DI (senders) ----------
     const diShow=()=>{ for(let i=1;i<=N.DI;i++){ const sw=parseInt(($('swtype-in'+i)?.value)||'0',10); $('momentary-wrap-in'+i).style.display=(sw===0)?'':'none'; $('latching-wrap-in'+i).style.display=(sw===1)?'':'none'; } };
     for(let i=1;i<=N.DI;i++){
       on($('enable-in'+i),'change',()=> schedule('di-en', ()=> send('Config',{t:'inputEnable', list:[...Array(N.DI)].map((_,k)=>$('enable-in'+(k+1)).checked)})));
@@ -485,7 +551,6 @@
       on($('ltgt-in'+i),'change', ()=> schedule('di-ltgt', ()=> send('Config',{t:'inputLatchTarget', list:[...Array(N.DI)].map((_,k)=>parseInt($('ltgt-in'+(k+1)).value||'0',10))})));
     }
 
-    // ---------- Buttons (senders) ----------
     for(let i=1;i<=N.BTN;i++){
       on($('action-button'+i),'change',()=>{
         if(!isOpen()) return;
@@ -494,18 +559,15 @@
       });
     }
 
-    // ---------- LEDs (senders) ----------
     const ledSend=()=>{ if(!isOpen()) return; const list=[]; for(let j=1;j<=N.LED;j++) list.push({mode:parseInt(($('mode-led'+j).value)||'0',10), source:parseInt(($('source-led'+j).value)||'0',10)}); send('Config',{t:'leds',list}); };
     for(let i=1;i<=N.LED;i++){ on($('mode-led'+i),'change',ledSend); on($('source-led'+i),'change',ledSend); }
 
-    // ---------- Apply quiet-firmware snapshots ----------
     function applyConfig(cfg){
       if(!cfg) return;
 
       const mb = cfg.mb || {};
       $('live-address').textContent = (mb.address!=null)? String(mb.address) : '--';
       $('live-baud').textContent    = (mb.baud!=null)? String(mb.baud) : '--';
-      // reflect into controls quietly
       let echoGuard=true;
       try{
         if(mb.address!=null) $('modbus-address').value=String(mb.address);
@@ -571,7 +633,6 @@
       }finally{ echoGuard=false; }
     }
 
-    // initial render so the box has the fixed height even before messages
     renderLog();
   })();
   </script>
