@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HomeMaster ALM-173-R1 Alarm I/O Module</title>
-  <link rel="stylesheet" href="https://www.home-master.eu/assets/css/hm-plc.css">
-</head>
-<body>
 <div class="hm-plc">
   <div class="plc-wrap">
 
@@ -268,39 +259,6 @@
             <li>LEDs: Steady/Blink, source Any, G1–G3, or relay override</li>
           </ul>
 
-          <h3 id="minimal-esphome-yaml"><strong>Minimal ESPHome YAML (Controller side)</strong></h3>
-          <p>
-            Example controller configuration to enable Modbus and import the ALM package:
-          </p>
-
-          <pre><code>uart:
-  id: uart_modbus
-  tx_pin: 17
-  rx_pin: 16
-  baud_rate: 19200
-  parity: NONE
-  stop_bits: 1
-
-modbus:
-  id: modbus_bus
-  uart_id: uart_modbus
-
-packages:
-  alm1:
-    url: https://github.com/isystemsautomation/HOMEMASTER
-    ref: main
-    files:
-      - path: ALM-173-R1/Firmware/default_alm_173_r1_plc/default_alm_173_r1_plc.yaml
-        vars:
-          alm_prefix: "ALM#1"   # shown in Home Assistant
-          alm_id: alm_1         # unique internal ID
-          alm_address: 5        # Modbus address set in WebConfig
-    refresh: 1d</code></pre>
-
-          <p class="plc-caption">
-            <code>alm_address</code> must match the Modbus address configured in <a href="https://www.home-master.eu/configtool-alm-173-r1" target="_blank" rel="noopener">WebConfig</a>.
-          </p>
-
         </div>
 
         <!-- Right: WebConfig images -->
@@ -346,6 +304,42 @@ packages:
             >
           </div>
         </div>
+      </div>
+
+      <!-- Full width: Minimal ESPHome YAML (Controller side) -->
+      <div class="plc-yaml-fullwidth" style="margin-top: 2rem;">
+        <h3 id="minimal-esphome-yaml"><strong>Minimal ESPHome YAML (Controller side)</strong></h3>
+        <p>
+          Example controller configuration to enable Modbus and import the ALM package:
+        </p>
+
+        <pre><code>uart:
+  id: uart_modbus
+  tx_pin: 17
+  rx_pin: 16
+  baud_rate: 19200
+  parity: NONE
+  stop_bits: 1
+
+modbus:
+  id: modbus_bus
+  uart_id: uart_modbus
+
+packages:
+  alm1:
+    url: https://github.com/isystemsautomation/HOMEMASTER
+    ref: main
+    files:
+      - path: ALM-173-R1/Firmware/default_alm_173_r1_plc/default_alm_173_r1_plc.yaml
+        vars:
+          alm_prefix: "ALM#1"   # shown in Home Assistant
+          alm_id: alm_1         # unique internal ID
+          alm_address: 5        # Modbus address set in WebConfig
+    refresh: 1d</code></pre>
+
+        <p class="plc-caption">
+          <code>alm_address</code> must match the Modbus address configured in <a href="https://www.home-master.eu/configtool-alm-173-r1" target="_blank" rel="noopener">WebConfig</a>.
+        </p>
       </div>
     </div>
 
@@ -451,29 +445,114 @@ packages:
       </p>
     </div>
 
+    <!-- ===================== POWER SUPPLY ===================== -->
+    <div class="plc-section">
+      <h2 id="power-supply"><strong>Power Supply</strong></h2>
+
+      <p>
+        The ALM-173-R1 is powered from a regulated <strong>24&nbsp;V DC SELV</strong> supply connected to the <strong>V+</strong> and <strong>0V</strong> terminals.
+        Internal converters generate the logic rails and isolated 12&nbsp;V / 5&nbsp;V sensor rails.
+      </p>
+
+      <h3 id="power-input-specifications"><strong>Power Input Specifications</strong></h3>
+      <div class="plc-tablewrap">
+        <table class="table table-bordered o_table">
+          <caption>Power Input Specifications</caption>
+          <thead>
+            <tr>
+              <th scope="col">Input Option</th>
+              <th scope="col">Terminals</th>
+              <th scope="col">Range</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">24&nbsp;V DC SELV</th>
+              <td>V+ / 0V</td>
+              <td>20–30 V DC (typ. 24 V)</td>
+              <td>Primary module supply; see datasheet for exact limits and power budget.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Power path and protections (summary):</strong></p>
+      <ul class="plc-list">
+        <li>24&nbsp;V DC input with reverse polarity and surge protection.</li>
+        <li>Onboard conversion to 5&nbsp;V and 3.3&nbsp;V logic rails.</li>
+        <li>Isolated 12&nbsp;V and 5&nbsp;V sensor rails (PS/1, PS/2) with PTC/fuse protection (for low‑power sensors only).</li>
+        <li>SELV system; never use for mains or hazardous voltages.</li>
+      </ul>
+
+      <p class="plc-caption">
+        For sizing the 24&nbsp;V supply, consider base electronics, relay coil current and sensor rail consumption, with adequate headroom as described in the datasheet/README.
+      </p>
+    </div>
+
+    <!-- ===================== INPUTS & OUTPUTS ===================== -->
+    <div class="plc-section">
+      <h2 id="inputs-outputs"><strong>Inputs &amp; Outputs</strong></h2>
+
+      <!-- Digital Inputs -->
+      <h3 id="digital-inputs-table"><strong>Digital Inputs (17 channels)</strong></h3>
+      <div class="plc-tablewrap">
+        <table class="table table-bordered o_table">
+          <caption>Digital Inputs (IN1…IN17)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Channel</th>
+              <th scope="col">Terminals</th>
+              <th scope="col">Type</th>
+              <th scope="col">Signal</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">IN1…IN17</th>
+              <td>INx / GND I.x</td>
+              <td>Opto‑isolated</td>
+              <td>Dry contact / isolated low‑voltage (SELV)</td>
+              <td>Each input is referenced to its own isolated return, debounced in firmware and mapped to alarm groups (None / G1 / G2 / G3).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Digital input features:</strong></p>
+      <ul class="plc-list">
+        <li>17 independent opto‑isolated channels (IN1…IN17) referenced to isolated GND_ISO returns.</li>
+        <li>Per‑input configuration: Enable, Invert (for NC sensors) and Alarm Group (None / G1 / G2 / G3) via WebConfig.</li>
+        <li>Inputs feed the internal alarm engine, which generates Any Alarm and per‑group status bits on Modbus.</li>
+        <li>Intended for SELV dry contacts or isolated low‑voltage signals only; never connect mains or non‑SELV circuits.</li>
+      </ul>
+
+      <hr class="plc-hr">
+
+      <!-- User Interface -->
+      <h3 id="user-interface"><strong>User Interface</strong></h3>
+      <div class="plc-tablewrap">
+        <table class="table table-bordered o_table">
+          <caption>User Interface Components</caption>
+          <thead>
+            <tr><th scope="col">Component</th><th scope="col">Quantity</th><th scope="col">Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Buttons</th><td>4</td><td>Configurable actions: Ack All, Ack G1–G3, or Relay 1–3 override (set in WebConfig).</td></tr>
+            <tr><th scope="row">User LEDs</th><td>4</td><td>Configurable mode (Steady/Blink) and source (Any, G1–G3, relay override) plus PWR/TX/RX status LEDs.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="plc-caption">
+        Buttons and LEDs are fully configurable via WebConfig; the alarm engine combines inputs and groups to drive relays and indicators.
+      </p>
+    </div>
+
     <!-- ===================== CABLING AND WIRINGS ===================== -->
     <div class="plc-section">
       <h2 id="cabling-wirings"><strong>Cabling and wirings</strong></h2>
-
-      <h3 id="rs485-bus"><strong>RS‑485 Field Bus (Modbus RTU)</strong></h3>
-      <div class="plc-grid">
-        <div class="plc-col">
-          <div class="plc-wirecard">
-            <img
-              src="https://raw.githubusercontent.com/isystemsautomation/HOMEMASTER/refs/heads/main/ALM-173-R1/Images/ALM_RS485Connection.png"
-              alt="ALM-173-R1 RS‑485 wiring example"
-              loading="lazy"
-              width="600"
-              height="400"
-              decoding="async"
-            >
-            <div class="plc-caption">
-              Connect <strong>A</strong>, <strong>B</strong> and <strong>COM</strong> terminals to the RS‑485 trunk. Use twisted pair, terminate at both ends and share a common reference.
-            </div>
-          </div>
-        </div>
-      </div>
-
       <h3 id="power-supply"><strong>24 V DC Power Supply</strong></h3>
       <div class="plc-grid">
         <div class="plc-col">
@@ -510,26 +589,258 @@ packages:
             </div>
           </div>
         </div>
+        <div class="plc-col">
+          <div class="plc-wirecard">
+            <ul class="plc-list">
+              <li><strong>17 opto-isolated digital inputs</strong> (IN1…IN17) referenced to isolated <strong>GND_ISO</strong> returns.</li>
+              <li>Intended for <strong>dry contacts / isolated low-voltage signals</strong>; do not connect mains or non-SELV circuits.</li>
+              <li>Per-input configuration in WebConfig: <strong>Enable</strong>, <strong>Invert</strong> (for NC sensors) and <strong>Alarm Group</strong> (None / G1 / G2 / G3).</li>
+              <li>Inputs feed the internal alarm engine, which generates <strong>Any Alarm</strong> and per-group (G1–G3) status bits exposed via Modbus.</li>
+              <li>Use shielded twisted pair and keep DI wiring away from high‑dv/dt or high‑current cables for best noise immunity.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <h3 id="relay-outputs"><strong>Relay Outputs</strong></h3>
+
+      <p>
+        The ALM-173-R1 provides <strong>3 SPDT mechanical relays</strong> for switching external loads using dry contacts.
+        Each relay exposes <strong>NO / NC / COM</strong> terminals and is driven via isolated control circuitry from the MCU.
+      </p>
+
+      <p>
+        <strong>Rating:</strong> the relay outputs are limited by the PCB copper and terminal system rating as specified in the official datasheet.
+        For higher power or inductive loads, use external contactors or power relays and treat the ALM relays as control contacts only.
+      </p>
+
+      <p class="plc-callout plc-callout--warning">
+        <strong>External protection required:</strong>
+        Every relay output must be protected by an external fuse or circuit breaker sized according to the load and system limits.
+        Relay output circuits are <strong>not internally fused</strong>, so external overcurrent protection is mandatory for safe operation.
+      </p>
+
+      <h3><strong>Relay Specifications</strong></h3>
+      <div class="plc-tablewrap" style="margin-top:1rem;">
+        <table class="table table-bordered o_table">
+          <caption>Relay Specifications</caption>
+          <thead>
+            <tr>
+              <th scope="col">Channel</th>
+              <th scope="col">Contacts</th>
+              <th scope="col">Type</th>
+              <th scope="col">Typical Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Relay 1</th>
+              <td>NO / NC / COM</td>
+              <td>SPDT</td>
+              <td>Alarm or siren output (group or master controlled)</td>
+            </tr>
+            <tr>
+              <th scope="row">Relay 2</th>
+              <td>NO / NC / COM</td>
+              <td>SPDT</td>
+              <td>Zone or summary alarm output</td>
+            </tr>
+            <tr>
+              <th scope="row">Relay 3</th>
+              <td>NO / NC / COM</td>
+              <td>SPDT</td>
+              <td>Additional alarm, strobe or fault contact</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <h3 id="relays"><strong>Relays (RLY1…RLY3, COM/NO/NC)</strong></h3>
-      <div class="plc-grid">
+      <div class="plc-grid" style="margin-top:1.5rem;">
+        <!-- Left: wiring image -->
         <div class="plc-col">
           <div class="plc-wirecard">
             <img
               src="https://raw.githubusercontent.com/isystemsautomation/HOMEMASTER/refs/heads/main/ALM-173-R1/Images/ALM_RelayConnection.png"
-              alt="ALM-173-R1 relay wiring example"
+              alt="ALM-173-R1 relay wiring example (COM/NO/NC)"
               loading="lazy"
               width="600"
               height="400"
               decoding="async"
             >
             <div class="plc-caption">
-              Relays are <strong>dry contacts</strong>. Route the external supply through <strong>COM</strong> and <strong>NO/NC</strong> to your load.
-              Respect contact ratings and use RC/TVS snubbers for inductive loads.
+              Typical wiring using <strong>COM</strong>, <strong>NO</strong> and <strong>NC</strong> contacts. Relays are dry contacts and must be wired with external supply, fusing and snubbers where required.
             </div>
           </div>
         </div>
+
+        <!-- Right: safety and usage text -->
+        <div class="plc-col">
+          <div class="plc-wirecard">
+            <ul class="plc-list">
+              <li>Each relay has <strong>COM / NO / NC</strong> terminals.</li>
+              <li>Use <strong>NO</strong> for default-OFF loads, and <strong>NC</strong> for default-ON loads.</li>
+              <li>Loads connected to relay contacts may carry hazardous voltage depending on your external wiring.</li>
+              <li>Supports AC and DC switching; observe derating for DC and inductive loads as per contact manufacturer data.</li>
+            </ul>
+
+            <p class="plc-caption plc-callout plc-callout--warning" style="margin-top:10px;">
+              <strong>Common protection warning:</strong>
+              If a single common fuse or circuit breaker is used to protect multiple relay outputs, its rating must not be chosen
+              by summing relay currents. The protective device rating must respect the per-output system limit and applicable standards.
+            </p>
+
+            <p class="plc-caption" style="margin-top:6px;">
+              For inductive or DC loads (contactors, solenoids, motors), use appropriate suppression (RC snubbers, MOVs, or flyback diodes).
+              Loads exceeding recommended PCB current limits must be switched using external contactors or wiring that bypasses PCB copper paths.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== COMMUNICATION & PROTOCOLS ===================== -->
+    <div class="plc-section">
+      <h2 id="communication-protocols"><strong>Communication &amp; Protocols</strong></h2>
+
+      <ul class="plc-list">
+        <li><strong>Modbus RTU (RS‑485)</strong> – primary field bus for controller integration.</li>
+      </ul>
+
+      <h3><strong>RS‑485 Communication</strong></h3>
+
+      <div class="plc-tablewrap">
+        <table class="table table-bordered o_table">
+          <caption>RS‑485 Communication Parameters</caption>
+          <thead>
+            <tr>
+              <th scope="col">Parameter</th>
+              <th scope="col">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Protocol</th>
+              <td>Modbus RTU</td>
+            </tr>
+            <tr>
+              <th scope="row">Interface</th>
+              <td>RS‑485 half-duplex</td>
+            </tr>
+            <tr>
+              <th scope="row">Terminals</th>
+              <td>A / B / COM</td>
+            </tr>
+            <tr>
+              <th scope="row">Default Address</th>
+              <td>3 (changeable 1–255 via WebConfig)</td>
+            </tr>
+            <tr>
+              <th scope="row">Default Baud Rate</th>
+              <td>19200 (selectable 9600–115200, 8N1)</td>
+            </tr>
+            <tr>
+              <th scope="row">Data Bits</th>
+              <td>8</td>
+            </tr>
+            <tr>
+              <th scope="row">Parity</th>
+              <td>None</td>
+            </tr>
+            <tr>
+              <th scope="row">Stop Bits</th>
+              <td>1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="plc-caption">
+        Uses an RS‑485 transceiver with surge and overcurrent protection; see schematics for exact component references.
+      </p>
+
+      <h3><strong>Modbus Basics</strong></h3>
+      <ul class="plc-list">
+        <li>ALM-173-R1 operates as a <strong>Modbus RTU slave</strong>; the controller (PLC/ESPHome/SCADA) is the master.</li>
+        <li>Address and baud are configured via WebConfig and stored in flash (restored at power‑up).</li>
+        <li>Data model includes discrete inputs, coils, input registers and holding registers for alarms, relays, LEDs and configuration snapshots (see README for full map).</li>
+      </ul>
+
+      <h3><strong>Function Codes</strong></h3>
+      <ul class="plc-list">
+        <li><code>0x01</code> Read Coils – relay and control bits.</li>
+        <li><code>0x02</code> Read Discrete Inputs – debounced input and alarm bits.</li>
+        <li><code>0x03</code> Read Holding Registers – configuration and status snapshots.</li>
+        <li><code>0x04</code> Read Input Registers – live telemetry (e.g. active Modbus config, bitmaps).</li>
+        <li><code>0x05 / 0x0F</code> Write Coils – control relays, overrides and acknowledges.</li>
+        <li><code>0x06 / 0x10</code> Write Holding Registers – provisioning and advanced configuration.</li>
+      </ul>
+
+      <h3><strong>RS‑485 Wiring</strong></h3>
+      <div class="plc-grid">
+        <div class="plc-col">
+          <div class="plc-wirecard">
+            <img
+              src="https://raw.githubusercontent.com/isystemsautomation/HOMEMASTER/refs/heads/main/ALM-173-R1/Images/ALM_RS485Connection.png"
+              alt="RS‑485 wiring example: bus connection (A/B/COM)"
+              loading="lazy"
+              width="600"
+              height="400"
+              decoding="async"
+            >
+            <div class="plc-caption">
+              Connect <strong>A</strong>, <strong>B</strong> and <strong>COM</strong> along the RS‑485 trunk. Use 120 Ω termination at both physical ends and avoid star topologies.
+            </div>
+          </div>
+        </div>
+
+        <div class="plc-col">
+          <h4><strong>Termination &amp; Biasing</strong></h4>
+          <ul class="plc-list">
+            <li>Terminate the RS‑485 line with approximately <strong>120 Ω</strong> resistors at the two physical ends of the bus only.</li>
+            <li>Do not terminate intermediate devices.</li>
+            <li>Provide fail-safe biasing at the controller/master as recommended for Modbus RTU networks.</li>
+          </ul>
+
+          <h4><strong>COM / Reference Ground</strong></h4>
+          <ul class="plc-list">
+            <li>Connect <strong>COM</strong> (reference ground) between all RS‑485 nodes when separate power supplies are used.</li>
+            <li>This limits common‑mode voltage and helps prevent communication faults.</li>
+          </ul>
+
+          <p class="plc-caption">
+            A common 0 V reference between controller and ALM module improves noise immunity and reduces RS‑485 communication errors.
+          </p>
+        </div>
+      </div>
+
+      <h3><strong>USB‑C Interface</strong></h3>
+      <div class="plc-tablewrap">
+        <table class="table table-bordered o_table">
+          <caption>USB‑C Interface Parameters</caption>
+          <thead>
+            <tr>
+              <th scope="col">Parameter</th>
+              <th scope="col">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Function</th>
+              <td>Configuration and diagnostics via Web Serial (WebConfig)</td>
+            </tr>
+            <tr>
+              <th scope="row">Interface</th>
+              <td>USB‑C</td>
+            </tr>
+            <tr>
+              <th scope="row">Protocol</th>
+              <td>USB serial (CDC) presented to the browser</td>
+            </tr>
+            <tr>
+              <th scope="row">Purpose</th>
+              <td>Setting Modbus parameters, mapping inputs/relays/LEDs/buttons, and monitoring the serial log</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -622,33 +933,32 @@ packages:
       <h2 id="compliance-certifications">Compliance &amp; Certifications</h2>
 
       <p>
-        The HomeMaster ALM-173-R1 is designed to comply with applicable European Union directives for EMC, safety and hazardous substances.
-        <strong>ISYSTEMS AUTOMATION</strong> (HomeMaster brand) maintains technical documentation and the EU Declaration of Conformity.
+        The HomeMaster ALM-173-R1 is designed to comply with the applicable European Union directives.
+        <strong>ISYSTEMS AUTOMATION</strong> (HomeMaster brand) maintains the technical documentation and a signed EU Declaration of Conformity (DoC).
       </p>
 
       <h3>EU Directives</h3>
       <p>
-        <strong>EMC</strong> 2014/30/EU · <strong>RoHS</strong> 2011/65/EU and amendments
+        <strong>EMC</strong> 2014/30/EU · <strong>LVD</strong> 2014/35/EU · <strong>RoHS</strong> 2011/65/EU
       </p>
 
-      <h3>Harmonised Standards (reference)</h3>
+      <h3>Harmonised Standards</h3>
       <table class="plc-table-compact">
         <tr><th scope="col">Area</th><th scope="col">Standards</th></tr>
         <tr><td><strong>EMC</strong></td><td>EN 55032 (Emissions) · EN 55035 (Immunity)</td></tr>
+        <tr><td><strong>Electrical Safety</strong></td><td>EN 62368-1</td></tr>
         <tr><td><strong>RoHS</strong></td><td>EN IEC 63000</td></tr>
       </table>
 
       <h3>Equipment Classification</h3>
       <p>
-        Intended for use in industrial and commercial environments as part of a SELV control system, mounted inside a protective enclosure.
+        <strong>Class A Information Technology Equipment</strong> (industrial / commercial environment)
       </p>
 
       <h3>Safety Notice</h3>
       <p>
-        <strong>24 V DC only (SELV).</strong> Always disconnect power before wiring. Observe local electrical codes and panel‑building practices.
+        <strong>24 V DC:</strong> SELV · Qualified personnel only
       </p>
     </div>
   </div><!-- /plc-wrap -->
 </div><!-- /hm-plc -->
-</body>
-</html>
